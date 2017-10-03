@@ -8,6 +8,11 @@ set(CMAKE_CXX_FLAGS "${CXX_FLAGS}")
 
 add_executable(TravisTest src/main.cpp)
 
+find_package(Boost 1.63)
+if (NOT Boost_FOUND)
+    message(WARNING "The rest of Boost was not found; some tests and examples will be disabled.")
+endif()
+
 ##############################################################################
 # Setup the `check` target to build and then run all the tests
 ##############################################################################

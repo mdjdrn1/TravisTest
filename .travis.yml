@@ -94,24 +94,24 @@ install:
   # # ############################################################################
   # # # Install Boost headers
   # # ############################################################################
-  # - |
-  #   if [[ "${BOOST_VERSION}" != "" ]]; then
-  #     BOOST_DIR=${DEPS_DIR}/boost-${BOOST_VERSION}
-  #     if [[ -z "$(ls -A ${BOOST_DIR})" ]]; then
-  #       if [[ "${BOOST_VERSION}" == "trunk" ]]; then
-  #         BOOST_URL="http://github.com/boostorg/boost.git"
-  #         travis_retry git clone --depth 1 --recursive ${BOOST_URL} ${BOOST_DIR} || exit 1
-  #         (cd ${BOOST_DIR} && ./bootstrap.sh && ./b2 headers) || exit 1
-  #       else
-  #         BOOST_URL="http://sourceforge.net/projects/boost/files/boost/${BOOST_VERSION}/boost_${BOOST_VERSION//\./_}.tar.gz"
-  #         mkdir -p ${BOOST_DIR}
-  #         { travis_retry wget -O - ${BOOST_URL} | tar --strip-components=1 -xz -C ${BOOST_DIR}; } || exit 1
-  #       fi
-  #       # Make sure we don't conflict with the Hana shipped with Boost
-  #       rm -rf ${BOOST_DIR}/include/boost/{hana,hana.hpp} || exit 1
-  #     fi
-  #     CMAKE_OPTIONS+=" -DBOOST_ROOT=${BOOST_DIR}"
-  #   fi
+  - |
+    if [[ "${BOOST_VERSION}" != "" ]]; then
+      BOOST_DIR=${DEPS_DIR}/boost-${BOOST_VERSION}
+      if [[ -z "$(ls -A ${BOOST_DIR})" ]]; then
+        if [[ "${BOOST_VERSION}" == "trunk" ]]; then
+          BOOST_URL="http://github.com/boostorg/boost.git"
+          travis_retry git clone --depth 1 --recursive ${BOOST_URL} ${BOOST_DIR} || exit 1
+          (cd ${BOOST_DIR} && ./bootstrap.sh && ./b2 headers) || exit 1
+        else
+          BOOST_URL="http://sourceforge.net/projects/boost/files/boost/${BOOST_VERSION}/boost_${BOOST_VERSION//\./_}.tar.gz"
+          mkdir -p ${BOOST_DIR}
+          { travis_retry wget -O - ${BOOST_URL} | tar --strip-components=1 -xz -C ${BOOST_DIR}; } || exit 1
+        fi
+        # Make sure we don't conflict with the Hana shipped with Boost
+        rm -rf ${BOOST_DIR}/include/boost/{hana,hana.hpp} || exit 1
+      fi
+      CMAKE_OPTIONS+=" -DBOOST_ROOT=${BOOST_DIR}"
+    fi
 
   ############################################################################
   # Install a recent CMake
@@ -224,9 +224,9 @@ script:
       touch Jamroot
       echo "using clang : : ${CXX} ;" > project-config.jam
       if [[ "${LDFLAGS}" == "" ]]; then
-        (cd test && b2 toolset=clang cxxflags="-std=c++1y ${CXXFLAGS}" include="${BOOST_DIR}")
+        (cd test && b2 toolset=clang cxxflags="-std=c++17 ${CXXFLAGS}" include="${BOOST_DIR}")
       else
-        (cd test && b2 toolset=clang cxxflags="-std=c++1y ${CXXFLAGS}" include="${BOOST_DIR}" linkflags="${LDFLAGS}")
+        (cd test && b2 toolset=clang cxxflags="-std=c++17 ${CXXFLAGS}" include="${BOOST_DIR}" linkflags="${LDFLAGS}")
       fi
     fi
 
