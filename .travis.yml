@@ -9,6 +9,7 @@ sudo: false
 addons:
   apt:
     packages:
+      - valgrind
       - g++-6
       - g++-7
     sources: &sources
