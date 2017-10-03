@@ -1,13 +1,14 @@
+# Based on Boost.Hana configuration
 # Copyright Louis Dionne 2013-2017
 # Distributed under the Boost Software License, Version 1.0.
 
 language: c++
 sudo: false
 
+
 addons:
   apt:
     packages:
-      # - valgrind
       - g++-6
       - g++-7
     sources: &sources
@@ -16,15 +17,7 @@ addons:
 
 cache:
   directories:
-    # - ${TRAVIS_BUILD_DIR}/deps/llvm-3.6.2
-    # - ${TRAVIS_BUILD_DIR}/deps/llvm-3.7.1
-    # - ${TRAVIS_BUILD_DIR}/deps/llvm-3.8.0
-    # - ${TRAVIS_BUILD_DIR}/deps/llvm-3.9.0
     - ${TRAVIS_BUILD_DIR}/deps/llvm-5.0.0
-    # - ${TRAVIS_BUILD_DIR}/deps/boost-1.59.0
-    # - ${TRAVIS_BUILD_DIR}/deps/boost-1.60.0
-    # - ${TRAVIS_BUILD_DIR}/deps/boost-1.61.0
-    # - ${TRAVIS_BUILD_DIR}/deps/boost-1.62.0
     - ${TRAVIS_BUILD_DIR}/deps/boost-1.63.0
 
 
@@ -35,7 +28,7 @@ matrix:
     ##########################################################################
     - os: osx
       env: CHECK_FORMATTING=true
-      osx_image: xcode8
+      osx_image: xcode9
 
     ##########################################################################
     # Build with the main configuration on all the supported compilers
@@ -43,26 +36,6 @@ matrix:
     # Note that we only use the memory checker on the main configuration to
     # speed up Travis builds.
     ##########################################################################
-    # # Clang 3.6
-    # - os: linux
-    #   env: UNIT_TESTS=true LLVM_VERSION=3.6.2 BOOST_VERSION=default ENABLE_MEMCHECK=true
-    #   compiler: clang
-
-    # # Clang 3.7
-    # - os: linux
-    #   env: UNIT_TESTS=true LLVM_VERSION=3.7.1 BOOST_VERSION=default ENABLE_MEMCHECK=true
-    #   compiler: clang
-
-    # # Clang 3.8
-    # - os: linux
-    #   env: UNIT_TESTS=true LLVM_VERSION=3.8.0 BOOST_VERSION=default ENABLE_MEMCHECK=true
-    #   compiler: clang
-
-    # # Clang 3.9
-    # - os: linux
-    #   env: UNIT_TESTS=true LLVM_VERSION=3.9.0 BOOST_VERSION=default ENABLE_MEMCHECK=true
-    #   compiler: clang
-
     # Clang 5.0
     - os: linux
       env: UNIT_TESTS=true LLVM_VERSION=5.0.0 BOOST_VERSION=default ENABLE_MEMCHECK=true
@@ -78,21 +51,6 @@ matrix:
       env: UNIT_TESTS=true COMPILER=g++-7     BOOST_VERSION=default ENABLE_MEMCHECK=true
       compiler: gcc
 
-    # # Xcode 6.4
-    # - os: osx
-    #   env: UNIT_TESTS=true BOOST_VERSION=default
-    #   osx_image: xcode6.4
-
-    # # Xcode 7.3
-    # - os: osx
-    #   env: UNIT_TESTS=true BOOST_VERSION=default
-    #   osx_image: xcode7.3
-
-    # # Xcode 8
-    # - os: osx
-    #   env: UNIT_TESTS=true BOOST_VERSION=default
-    #   osx_image: xcode8
-
     # Xcode 9
     - os: osx
       env: UNIT_TESTS=true BOOST_VERSION=default
@@ -101,46 +59,6 @@ matrix:
     ##########################################################################
     # Build with variations in the configuration
     ##########################################################################
-    # Without concept checks
-    # - os: linux
-    #   env: UNIT_TESTS=true LLVM_VERSION=default BOOST_VERSION=default CMAKE_OPTIONS="-DBOOST_HANA_ENABLE_CONCEPT_CHECKS=OFF"
-    #   compiler: clang
-
-    # # With debug mode
-    # - os: linux
-    #   env: UNIT_TESTS=true LLVM_VERSION=default BOOST_VERSION=default CMAKE_OPTIONS="-DBOOST_HANA_ENABLE_DEBUG_MODE=ON"
-    #   compiler: clang
-
-    # # Without exceptions
-    # - os: linux
-    #   env: UNIT_TESTS=true LLVM_VERSION=default BOOST_VERSION=default CMAKE_OPTIONS="-DBOOST_HANA_ENABLE_EXCEPTIONS=OFF"
-    #   compiler: clang
-
-    # # Without exceptions on OS X
-    # - os: osx
-    #   env: UNIT_TESTS=true BOOST_VERSION=default CMAKE_OPTIONS="-DBOOST_HANA_ENABLE_EXCEPTIONS=OFF"
-    #   osx_image: xcode8
-
-    # # With Boost 1.59
-    # - os: linux
-    #   env: UNIT_TESTS=true LLVM_VERSION=default BOOST_VERSION=1.59.0
-    #   compiler: clang
-
-    # # With Boost 1.60
-    # - os: linux
-    #   env: UNIT_TESTS=true LLVM_VERSION=default BOOST_VERSION=1.60.0
-    #   compiler: clang
-
-    # # With Boost 1.61
-    # - os: linux
-    #   env: UNIT_TESTS=true LLVM_VERSION=default BOOST_VERSION=1.61.0
-    #   compiler: clang
-
-    # # With Boost 1.62
-    # - os: linux
-    #   env: UNIT_TESTS=true LLVM_VERSION=default BOOST_VERSION=1.62.0
-    #   compiler: clang
-
     # Without Boost (make sure we don't depend on it)
     - os: linux
       env: UNIT_TESTS=true LLVM_VERSION=default
@@ -154,46 +72,7 @@ matrix:
     # With Boost.Build instead of CMake (on OS X)
     - os: osx
       env: UNIT_TESTS=true BOOST_VERSION=default BOOST_BUILD=true
-      osx_image: xcode8
-
-
-    ##########################################################################
-    # Generate the documentation
-    ##########################################################################
-    # - os: linux
-      # env: DOCUMENTATION=true LLVM_VERSION=default BOOST_VERSION=default
-      # compiler: clang
-    # - os: linux
-      # env: DOCUMENTATION=true LLVM_VERSION=default BOOST_VERSION=default BOOST_BUILD=true
-      # compiler: clang
-
-
-    ##########################################################################
-    # Benchmarks
-    ##########################################################################
-    # - os: linux
-      # env: BENCHMARKS=true LLVM_VERSION=3.8.0 BOOST_VERSION=default CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Release"
-      # compiler: clang
-
-
-    ##########################################################################
-    # Jobs that are allowed to fail
-    ##########################################################################
-    # Clang trunk
-    # TODO: Find a way to download pre-built Clang trunk and enable this
-    # - os: linux
-    #   env: UNIT_TESTS=true LLVM_VERSION=trunk BOOST_VERSION=default
-    #   compiler: clang
-
-    # Boost trunk
-    # - os: linux
-      # env: UNIT_TESTS=true LLVM_VERSION=default BOOST_VERSION=trunk
-      # compiler: clang
-
-
-  # allow_failures:
-    # - env: UNIT_TESTS=true LLVM_VERSION=trunk BOOST_VERSION=default
-    # - env: UNIT_TESTS=true LLVM_VERSION=default BOOST_VERSION=trunk
+      osx_image: xcode9
 
 
 install:
@@ -206,8 +85,6 @@ install:
   ############################################################################
   # Setup default versions and override compiler if needed
   ############################################################################
-  # - if [[ "${LLVM_VERSION}" == "default" ]]; then LLVM_VERSION=3.9.0; fi
-  # - if [[ "${BOOST_VERSION}" == "default" ]]; then BOOST_VERSION=1.63.0; fi
   - if [[ "${LLVM_VERSION}" == "default" ]]; then LLVM_VERSION=5.0.0; fi
   - if [[ "${BOOST_VERSION}" == "default" ]]; then BOOST_VERSION=1.63.0; fi
 
@@ -216,24 +93,24 @@ install:
   # ############################################################################
   # # Install Boost headers
   # ############################################################################
-  # - |
-  #   if [[ "${BOOST_VERSION}" != "" ]]; then
-  #     BOOST_DIR=${DEPS_DIR}/boost-${BOOST_VERSION}
-  #     if [[ -z "$(ls -A ${BOOST_DIR})" ]]; then
-  #       if [[ "${BOOST_VERSION}" == "trunk" ]]; then
-  #         BOOST_URL="http://github.com/boostorg/boost.git"
-  #         travis_retry git clone --depth 1 --recursive ${BOOST_URL} ${BOOST_DIR} || exit 1
-  #         (cd ${BOOST_DIR} && ./bootstrap.sh && ./b2 headers) || exit 1
-  #       else
-  #         BOOST_URL="http://sourceforge.net/projects/boost/files/boost/${BOOST_VERSION}/boost_${BOOST_VERSION//\./_}.tar.gz"
-  #         mkdir -p ${BOOST_DIR}
-  #         { travis_retry wget -O - ${BOOST_URL} | tar --strip-components=1 -xz -C ${BOOST_DIR}; } || exit 1
-  #       fi
-  #       # Make sure we don't conflict with the Hana shipped with Boost
-  #       rm -rf ${BOOST_DIR}/include/boost/{hana,hana.hpp} || exit 1
-  #     fi
-  #     CMAKE_OPTIONS+=" -DBOOST_ROOT=${BOOST_DIR}"
-  #   fi
+  - |
+    if [[ "${BOOST_VERSION}" != "" ]]; then
+      BOOST_DIR=${DEPS_DIR}/boost-${BOOST_VERSION}
+      if [[ -z "$(ls -A ${BOOST_DIR})" ]]; then
+        if [[ "${BOOST_VERSION}" == "trunk" ]]; then
+          BOOST_URL="http://github.com/boostorg/boost.git"
+          travis_retry git clone --depth 1 --recursive ${BOOST_URL} ${BOOST_DIR} || exit 1
+          (cd ${BOOST_DIR} && ./bootstrap.sh && ./b2 headers) || exit 1
+        else
+          BOOST_URL="http://sourceforge.net/projects/boost/files/boost/${BOOST_VERSION}/boost_${BOOST_VERSION//\./_}.tar.gz"
+          mkdir -p ${BOOST_DIR}
+          { travis_retry wget -O - ${BOOST_URL} | tar --strip-components=1 -xz -C ${BOOST_DIR}; } || exit 1
+        fi
+        # Make sure we don't conflict with the Hana shipped with Boost
+        rm -rf ${BOOST_DIR}/include/boost/{hana,hana.hpp} || exit 1
+      fi
+      CMAKE_OPTIONS+=" -DBOOST_ROOT=${BOOST_DIR}"
+    fi
 
   ############################################################################
   # Install a recent CMake
@@ -251,11 +128,11 @@ install:
   # ############################################################################
   # # Install Boost.Build
   # ############################################################################
-  # - |
-  #   if [[ "${BOOST_BUILD}" == "true" ]]; then
-  #     (cd ${BOOST_DIR}/tools/build && ./bootstrap.sh && ./b2 install --prefix=${DEPS_DIR}/b2)
-  #     export PATH=${DEPS_DIR}/b2/bin:${PATH}
-  #   fi
+  - |
+    if [[ "${BOOST_BUILD}" == "true" ]]; then
+      (cd ${BOOST_DIR}/tools/build && ./bootstrap.sh && ./b2 install --prefix=${DEPS_DIR}/b2)
+      export PATH=${DEPS_DIR}/b2/bin:${PATH}
+    fi
 
   ############################################################################
   # Install Clang, libc++ and libc++abi
@@ -285,23 +162,6 @@ install:
       export PATH="${LLVM_DIR}/clang/bin:${PATH}"
     fi
   - ${CXX} --version
-
-  ############################################################################
-  # Install a recent Doxygen
-  ############################################################################
-  - |
-    if [[ "${DOCUMENTATION}" == "true" ]]; then
-      DOXYGEN_URL="http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.11.linux.bin.tar.gz"
-      mkdir doxygen && travis_retry wget --quiet -O - ${DOXYGEN_URL} | tar --strip-components=1 -xz -C doxygen
-      export PATH=${DEPS_DIR}/doxygen/bin:${PATH}
-      doxygen --version
-    fi
-
-  ############################################################################
-  # Install and use a more recent Ruby and install the gems for the benchmarks
-  ############################################################################
-  - rvm use 2.1 --install --binary --fuzzy
-  - gem install ruby-progressbar tilt
 
   ############################################################################
   # Install tools to check for code formatting errors (run on OS X only)
@@ -345,95 +205,29 @@ script:
       find include -name \*\.hpp | vera++ --rule F001 --rule L001 --rule L002 --error
     fi
 
-  ###########################################################################
-  # # Only push the documentation when we're on master, otherwise just make sure
-  # # it builds properly.
-  # ############################################################################
-  # - |
-  #   if [[ "${DOCUMENTATION}" == "true" && "${BOOST_BUILD}" != "true" ]]; then
-  #     (cd build && ! make doc 2>&1 | grep -E "warning|error") || exit 1
-
-  #     if [[ "${TRAVIS_PULL_REQUEST}" == "false" && "${TRAVIS_BRANCH}" == "master" ]]; then
-  #       # Suppress output to avoid leaking the token when the command fails
-  #       git clone https://ldionne:${GITHUB_TOKEN}@github.com/boostorg/hana --depth 1 --branch=gh-pages doc/html &>/dev/null
-
-  #       rm -rf doc/html/{search,*.png,*.css,*.js,*.html}
-  #       cp -R build/doc/html/* doc/html/
-
-  #       pushd doc/html
-  #       git add --all .
-  #       git commit --allow-empty -m "Update documentation to ${TRAVIS_COMMIT:0:7}"
-  #       # Suppress output to avoid leaking the token
-  #       travis_retry git push origin gh-pages &>/dev/null
-  #       popd
-  #     fi
-  #   fi
-
-  # - |
-  #   if [[ "${DOCUMENTATION}" == "true" && "${BOOST_BUILD}" == "true" ]]; then
-  #     touch Jamroot
-  #     (cd doc && b2)
-  #     if [[ ! -d doc/html ]]; then exit 1; fi
-  #   fi
-
-  ############################################################################
-  # We only run the full benchmarks on `master` when we're not in a pull
-  # request, because otherwise it takes too much Travis resources. Otherwise,
-  # we only run partial benchmarks to make sure they compile and run properly.
-  #
-  # Note: The benchmarks associated to a version of the documentation are
-  #       stored in `doc/html/benchmarks/`.
-  ############################################################################
-  # - |
-  #   if [[ "${BENCHMARKS}" == "true" ]]; then
-  #     if [[ "${TRAVIS_PULL_REQUEST}" == "false" && "${TRAVIS_BRANCH}" == "master" ]]; then
-  #       (cd build && make benchmarks) || exit 1
-  #       compiler_slug=$(cd build && make travis_compiler_slug | grep 'travis_compiler_slug:' | cut -d ' ' -f 2)
-  #       config_slug=$(cd build && make travis_config_slug | grep 'travis_config_slug:' | cut -d ' ' -f 2)
-
-  #       # Suppress output to avoid leaking the token when the command fails
-  #       git clone https://ldionne:${GITHUB_TOKEN}@github.com/boostorg/hana --depth 1 --branch=gh-pages doc/html &>/dev/null
-  #       rm -rf doc/html/benchmarks/${config_slug}/${compiler_slug}/
-  #       mkdir -p doc/html/benchmarks/${config_slug}/${compiler_slug}/
-  #       for benchmark in $(ls build/benchmark/*.json | grep -v ".erb"); do
-  #         cp ${benchmark} doc/html/benchmarks/${config_slug}/${compiler_slug}/
-  #       done
-
-  #       pushd doc/html
-  #       git add --all .
-  #       git commit --allow-empty -m "Update benchmarks to ${TRAVIS_COMMIT:0:7} for build type '${config_slug}' and compiler '${compiler_slug}'"
-  #       # Suppress output to avoid leaking the token
-  #       travis_retry git push origin gh-pages &>/dev/null
-  #       popd
-  #     else
-  #       export BOOST_HANA_JUST_CHECK_BENCHMARKS=true
-  #       (cd build && make benchmarks -j2)
-  #     fi
-  #   fi
-
   ############################################################################
   # Build and run the unit tests and examples.
   ############################################################################
-  # - |
-  #   if [[ "${UNIT_TESTS}" == "true" && "${BOOST_BUILD}" != "true" ]]; then
-  #     (cd build && make tests examples -j2 -k) &&
-  #     if [[ "${ENABLE_MEMCHECK}" == "true" ]]; then
-  #       (cd build && ctest --output-on-failure -j2 -D ExperimentalMemCheck)
-  #     else
-  #       (cd build && ctest --output-on-failure -j2)
-  #     fi
-  #   fi
+  - |
+    if [[ "${UNIT_TESTS}" == "true" && "${BOOST_BUILD}" != "true" ]]; then
+      (cd build && make tests examples -j2 -k) &&
+      if [[ "${ENABLE_MEMCHECK}" == "true" ]]; then
+        (cd build && ctest --output-on-failure -j2 -D ExperimentalMemCheck)
+      else
+        (cd build && ctest --output-on-failure -j2)
+      fi
+    fi
 
-  # - |
-  #   if [[ "${UNIT_TESTS}" == "true" && "${BOOST_BUILD}" == "true" ]]; then
-  #     touch Jamroot
-  #     echo "using clang : : ${CXX} ;" > project-config.jam
-  #     if [[ "${LDFLAGS}" == "" ]]; then
-  #       (cd test && b2 toolset=clang cxxflags="-std=c++1y ${CXXFLAGS}" include="${BOOST_DIR}")
-  #     else
-  #       (cd test && b2 toolset=clang cxxflags="-std=c++1y ${CXXFLAGS}" include="${BOOST_DIR}" linkflags="${LDFLAGS}")
-  #     fi
-  #   fi
+  - |
+    if [[ "${UNIT_TESTS}" == "true" && "${BOOST_BUILD}" == "true" ]]; then
+      touch Jamroot
+      echo "using clang : : ${CXX} ;" > project-config.jam
+      if [[ "${LDFLAGS}" == "" ]]; then
+        (cd test && b2 toolset=clang cxxflags="-std=c++1y ${CXXFLAGS}" include="${BOOST_DIR}")
+      else
+        (cd test && b2 toolset=clang cxxflags="-std=c++1y ${CXXFLAGS}" include="${BOOST_DIR}" linkflags="${LDFLAGS}")
+      fi
+    fi
 
 
 # notifications:
