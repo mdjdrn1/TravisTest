@@ -16,4 +16,14 @@ add_custom_target(check
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
         COMMENT "Build and then run all the tests and examples.")
 
+enable_testing()
+find_program(MEMORYCHECK_COMMAND valgrind)
+if (MEMORYCHECK_COMMAND)
+    message(STATUS "Found Valgrind: ${MEMORYCHECK_COMMAND}")
+    set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --error-exitcode=1")
+else()
+    message("Valgrind not found")
+endif()
+include(CTest)
+
 add_subdirectory(test)
