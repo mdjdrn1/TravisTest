@@ -90,27 +90,27 @@ install:
 
   - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
 
-  # ############################################################################
-  # # Install Boost headers
-  # ############################################################################
-  - |
-    if [[ "${BOOST_VERSION}" != "" ]]; then
-      BOOST_DIR=${DEPS_DIR}/boost-${BOOST_VERSION}
-      if [[ -z "$(ls -A ${BOOST_DIR})" ]]; then
-        if [[ "${BOOST_VERSION}" == "trunk" ]]; then
-          BOOST_URL="http://github.com/boostorg/boost.git"
-          travis_retry git clone --depth 1 --recursive ${BOOST_URL} ${BOOST_DIR} || exit 1
-          (cd ${BOOST_DIR} && ./bootstrap.sh && ./b2 headers) || exit 1
-        else
-          BOOST_URL="http://sourceforge.net/projects/boost/files/boost/${BOOST_VERSION}/boost_${BOOST_VERSION//\./_}.tar.gz"
-          mkdir -p ${BOOST_DIR}
-          { travis_retry wget -O - ${BOOST_URL} | tar --strip-components=1 -xz -C ${BOOST_DIR}; } || exit 1
-        fi
-        # Make sure we don't conflict with the Hana shipped with Boost
-        rm -rf ${BOOST_DIR}/include/boost/{hana,hana.hpp} || exit 1
-      fi
-      CMAKE_OPTIONS+=" -DBOOST_ROOT=${BOOST_DIR}"
-    fi
+  # # ############################################################################
+  # # # Install Boost headers
+  # # ############################################################################
+  # - |
+  #   if [[ "${BOOST_VERSION}" != "" ]]; then
+  #     BOOST_DIR=${DEPS_DIR}/boost-${BOOST_VERSION}
+  #     if [[ -z "$(ls -A ${BOOST_DIR})" ]]; then
+  #       if [[ "${BOOST_VERSION}" == "trunk" ]]; then
+  #         BOOST_URL="http://github.com/boostorg/boost.git"
+  #         travis_retry git clone --depth 1 --recursive ${BOOST_URL} ${BOOST_DIR} || exit 1
+  #         (cd ${BOOST_DIR} && ./bootstrap.sh && ./b2 headers) || exit 1
+  #       else
+  #         BOOST_URL="http://sourceforge.net/projects/boost/files/boost/${BOOST_VERSION}/boost_${BOOST_VERSION//\./_}.tar.gz"
+  #         mkdir -p ${BOOST_DIR}
+  #         { travis_retry wget -O - ${BOOST_URL} | tar --strip-components=1 -xz -C ${BOOST_DIR}; } || exit 1
+  #       fi
+  #       # Make sure we don't conflict with the Hana shipped with Boost
+  #       rm -rf ${BOOST_DIR}/include/boost/{hana,hana.hpp} || exit 1
+  #     fi
+  #     CMAKE_OPTIONS+=" -DBOOST_ROOT=${BOOST_DIR}"
+  #   fi
 
   ############################################################################
   # Install a recent CMake
@@ -194,8 +194,8 @@ script:
   - |
     if [[ "${CHECK_FORMATTING}" == "true" ]]; then
       # Find non-ASCII characters in headers
-      hpps=$(find include doc -name \*\.hpp)
-      cpps=$(find test example -name \*\.cpp)
+      hpps=$(find include -name \*\.hpp)
+      cpps=$(find src test -name \*\.cpp)
       pcregrep --color='auto' -n "[\x80-\xFF]" ${hpps} ${cpps}
       if [[ $? -ne 1 ]]; then exit 1; fi
 
@@ -210,7 +210,7 @@ script:
   ############################################################################
   - |
     if [[ "${UNIT_TESTS}" == "true" && "${BOOST_BUILD}" != "true" ]]; then
-      (cd build && make tests examples -j2 -k) &&
+      (cd build && make tests -j2 -k) &&
       if [[ "${ENABLE_MEMCHECK}" == "true" ]]; then
         (cd build && ctest --output-on-failure -j2 -D ExperimentalMemCheck)
       else
