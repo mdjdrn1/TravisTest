@@ -65,16 +65,6 @@ matrix:
       env: UNIT_TESTS=true LLVM_VERSION=default
       compiler: clang
 
-    # With Boost.Build instead of CMake (on Linux)
-    - os: linux
-      env: UNIT_TESTS=true LLVM_VERSION=default BOOST_VERSION=default BOOST_BUILD=true
-      compiler: clang
-
-    # With Boost.Build instead of CMake (on OS X)
-    - os: osx
-      env: UNIT_TESTS=true BOOST_VERSION=default BOOST_BUILD=true
-      osx_image: xcode9
-
 
 install:
   ############################################################################
@@ -125,15 +115,6 @@ install:
       brew upgrade cmake || brew install cmake
     fi
   - cmake --version
-
-  # ############################################################################
-  # # Install Boost.Build
-  # ############################################################################
-  - |
-    if [[ "${BOOST_BUILD}" == "true" ]]; then
-      (cd ${BOOST_DIR}/tools/build && ./bootstrap.sh && ./b2 install --prefix=${DEPS_DIR}/b2)
-      export PATH=${DEPS_DIR}/b2/bin:${PATH}
-    fi
 
   ############################################################################
   # Install Clang, libc++ and libc++abi
@@ -210,7 +191,7 @@ script:
   # Build and run the unit tests and examples.
   ############################################################################
   - |
-    if [[ "${UNIT_TESTS}" == "true" && "${BOOST_BUILD}" != "true" ]]; then
+    if [[ "${UNIT_TESTS}" == "true" ]]; then
       (cd build && make tests -j2 -k) &&
       if [[ "${ENABLE_MEMCHECK}" == "true" ]]; then
         (cd build && ctest --output-on-failure -j2 -D ExperimentalMemCheck)
@@ -218,21 +199,3 @@ script:
         (cd build && ctest --output-on-failure -j2)
       fi
     fi
-
-  - |
-    if [[ "${UNIT_TESTS}" == "true" && "${BOOST_BUILD}" == "true" ]]; then
-      touch Jamroot
-      echo "using clang : : ${CXX} ;" > project-config.jam
-      if [[ "${LDFLAGS}" == "" ]]; then
-        (cd test && b2 toolset=clang cxxflags="-std=c++17 ${CXXFLAGS}" include="${BOOST_DIR}")
-      else
-        (cd test && b2 toolset=clang cxxflags="-std=c++17 ${CXXFLAGS}" include="${BOOST_DIR}" linkflags="${LDFLAGS}")
-      fi
-    fi
-
-
-# notifications:
-#   webhooks:
-#     urls: https://webhooks.gitter.im/e/ce1e3a2036d94b4a644f
-#     on_success: change
-#     on_failure: always
